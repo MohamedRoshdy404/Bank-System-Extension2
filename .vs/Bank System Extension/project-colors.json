@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "dc1ce9d5-02f2-41f1-b7c8-e59101969a06": {
+      "ProjectGuid": "dc1ce9d5-02f2-41f1-b7c8-e59101969a06",
+      "DisplayName": "Bank System Extension",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}
