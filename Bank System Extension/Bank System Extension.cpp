@@ -6,6 +6,7 @@
 using namespace std;
 const string ClientsFileName = "Clients.txt";
 void ShowMainMenue();
+void ShowTransactionsMenueOption();
 struct sClient
 {
 	string AccountNumber;
@@ -430,22 +431,29 @@ short ReadNumberDeposit()
 	return Choice;
 }
 
-vector <sClient> MyFunIsDeposit(vector <sClient> vClients, sClient Client, double stWithdraw)
+bool MyFunIsDeposit(vector <sClient> vClients, sClient Client, double Amount)
 {
 
-
-	for (sClient& C : vClients)
+	char Answer = 'n';
+	cout << "\n\n Are you sure you want perfrom this transaction y/n ? ";
+	cin >> Answer;
+	if (Answer == 'y' || Answer == 'Y') 
 	{
-		if (C.AccountNumber == Client.AccountNumber)
+
+		for (sClient& C : vClients)
 		{
-			C.AccountBalance = (C.AccountBalance) + (stWithdraw);
+			if (C.AccountNumber == Client.AccountNumber)
+			{
+				C.AccountBalance += Amount;
+				SaveCleintsDataToFile(ClientsFileName, vClients);
+				cout << "\n\nDone Successfully. New balance is: " << C.AccountBalance;
+				return true;
+			}
+
 		}
 
 	}
-
-	SaveCleintsDataToFile(ClientsFileName, vClients);
-	vClients = LoadCleintsDataFromFile(ClientsFileName);
-	return vClients;
+	return false;
 }
 
 void ScreenDeposit()
@@ -456,56 +464,24 @@ void ScreenDeposit()
 	sClient Client;
 	vector <sClient> vClients = LoadCleintsDataFromFile(ClientsFileName);
 	string AccountNumber = ReadClientAccountNumber();
-	if (FindClientByAccountNumber(AccountNumber, vClients, Client))
+	while (!FindClientByAccountNumber(AccountNumber, vClients, Client))
 	{
-
-		PrintClientCard(Client);
-		cout << "Please enter Deposit amount? ";
-
-		MyFunIsDeposit(vClients, Client, ReadNumberDeposit());
-
+		cout << "\nClient with [" << AccountNumber << "] does not exist.\n";
+		AccountNumber = ReadClientAccountNumber();
 	}
-	else
-	{
-		cout << "\nClient with Account Number[" << AccountNumber << "] is not found!";
-	}
+
+	PrintClientCard(Client);
+
+	double Amount = 0;
+	cout << "Please enter Deposit amount? ";
+	cin >> Amount;
+
+	MyFunIsDeposit(vClients, Client, Amount);
 }
 
 
 
-short ReadNumberWithdraw()
-{
-	cout << "Please enter withdraw amount? ";
-	short Choice = 0;
-	cin >> Choice;
-	return Choice;
-}
 
-vector <sClient> MyFunIsWithdraw(vector <sClient> vClients, sClient Client, double stWithdraw)
-{
-
-
-	for (sClient& C : vClients)
-	{
-		if (C.AccountNumber == Client.AccountNumber)
-		{
-			if (stWithdraw > C.AccountBalance)
-			{
-				cout << "Amount Exceeds the balance, you can withdraw up to : " << C.AccountBalance << endl;
-				ReadNumberWithdraw();
-			}
-			else
-			{
-				C.AccountBalance = (C.AccountBalance) - (stWithdraw);
-			}
-		}
-
-	}
-
-	SaveCleintsDataToFile(ClientsFileName, vClients);
-	vClients = LoadCleintsDataFromFile(ClientsFileName);
-	return vClients;
-}
 
 void ScreenWithdraw()
 {
@@ -515,19 +491,26 @@ void ScreenWithdraw()
 	sClient Client;
 	vector <sClient> vClients = LoadCleintsDataFromFile(ClientsFileName);
 	string AccountNumber = ReadClientAccountNumber();
-	if (FindClientByAccountNumber(AccountNumber, vClients, Client))
+	while (!FindClientByAccountNumber(AccountNumber, vClients, Client))
 	{
-
-		PrintClientCard(Client);
-
-		MyFunIsWithdraw(vClients, Client, ReadNumberWithdraw());
-
-
+		cout << "\nClient with [" << AccountNumber << "] does not exist.\n";
+		AccountNumber = ReadClientAccountNumber();
 	}
-	else
+	
+	PrintClientCard(Client);
+
+	double Amount = 0;
+	cout << "Please enter withdraw amount? ";
+	cin >> Amount;
+
+	while (Amount > Client.AccountBalance)
 	{
-		cout << "\nClient with Account Number[" << AccountNumber << "] is not found!";
+		cout << "\nAmount Exceeds the balance, you can withdraw up tp : " << Client.AccountBalance << endl;
+		cout << "Please enter another amount? ";
+		cin >> Amount;
 	}
+
+	MyFunIsDeposit(vClients, Client, Amount * -1);
 }
 
 
@@ -576,6 +559,12 @@ void ScreenTotalBalances()
 	ShowAllBalances();
 }
 
+void GoBackTransactionsMenue()
+{
+	cout << "\n\nPress any key to go back yo Transactions Menue...";
+	system("pause>0");
+	ShowTransactionsMenueOption();
+}
 
 void PerfromTransactionsMenueOption(enTransactionsMenueOption TransactionsMenueOption)
 {
@@ -584,14 +573,17 @@ void PerfromTransactionsMenueOption(enTransactionsMenueOption TransactionsMenueO
 	case enTransactionsMenueOption::eDeposit:
 		system("cls");
 		ScreenDeposit();
+		GoBackTransactionsMenue();
 		break;
 	case enTransactionsMenueOption::eWithdraw:
 		system("cls");
 		ScreenWithdraw();
+		GoBackTransactionsMenue();
 		break;
 	case enTransactionsMenueOption::eTotalBalances:
 		system("cls");
 		ScreenTotalBalances();
+		GoBackTransactionsMenue();
 		break;
 	case enTransactionsMenueOption::eMainMenue:
 		system("cls");
