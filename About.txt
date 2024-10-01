@@ -1,0 +1,8 @@
+
+========================================================================
+
+About the banking system System features It contains admin pages and customer pages. Admin pages You can view all admins in the system with their data and permissions. You can add a new user, delete a user, edit user data and permissions, and search for a user using his username. Customer pages:
+Display a list of all customers and their data, add a customer, delete a customer, edit customer data, search for a customer, withdrawal process, deposit process, view balance list.
+And log in and out of the program
+
+========================================================================
